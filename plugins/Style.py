@@ -6,11 +6,7 @@ from PyQt6.QtGui import *
 
 toolTip = "Customize Browser\nAppearance."
 app = None
-#TODO
-#make a way to programmatically generate this, but for all qwidgets
-#probably easy, i just lazed it the first time around
-#while sticking to not wanting default text files to be required
-#default stylesheet
+
 defaultSS = """QMenuButton{background-color:darkslategray;color:lightgray;}
 QToolButton{background-color:darkslategray;border-style:outset;border-width:1px;border-color:dimgray;color:lightgray;}
 QToolBar{background-color:darkslategray;color:lightgray;border:2px solid black;spacing:3px;icon-size:400px;}
@@ -32,154 +28,6 @@ QStatusBar{color:lightgray;background:darkslategray;}
 QProgressBar{color:lightgray;}
 QPlainTextEdit{background-color:darkslategray;color:lightgray;}
 """
-#list of colors for user to pick from
-colors = ["aliceblue",
-"antiquewhite",
-"aqua",
-"aquamarine",
-"azure",
-"beige",
-"bisque",
-"black",
-"blanchedalmond",
-"blue",
-"blueviolet",
-"brown",
-"burlywood",
-"cadetblue",
-"chartreuse",
-"chocolate",
-"coral",
-"cornflowerblue",
-"cornsilk",
-"crimson",
-"cyan",
-"darkblue",
-"darkcyan",
-"darkgoldenrod",
-"darkgray",
-"darkgreen",
-"darkgrey",
-"darkkhaki",
-"darkmagenta",
-"darkolivegreen",
-"darkorange",
-"darkorchid",
-"darkred",
-"darksalmon",
-"darkseagreen",
-"darkslateblue",
-"darkslategray",
-"darkslategrey",
-"darkturquoise",
-"darkviolet",
-"deeppink",
-"deepskyblue",
-"dimgray",
-"dimgrey",
-"dodgerblue",
-"firebrick",
-"floralwhite",
-"forestgreen",
-"fuchsia",
-"gainsboro",
-"ghostwhite",
-"gold",
-"goldenrod",
-"gray",
-"grey",
-"green",
-"greenyellow",
-"honeydew",
-"hotpink",
-"indianred",
-"indigo",
-"ivory",
-"khaki",
-"lavender",
-"lavenderblush",
-"lawngreen",
-"lemonchiffon",
-"lightblue",
-"lightcoral",
-"lightcyan",
-"lightgoldenrodyellow",
-"lightgray",
-"lightgreen",
-"lightgrey",
-"lightpink",
-"lightsalmon",
-"lightseagreen",
-"lightskyblue",
-"lightslategray",
-"lightslategrey",
-"lightsteelblue",
-"lightyellow",
-"lime",
-"limegreen",
-"linen",
-"magenta",
-"maroon",
-"mediumaquamarine",
-"mediumblue",
-"mediumorchid",
-"mediumpurple",
-"mediumseagreen",
-"mediumslateblue",
-"mediumspringgreen",
-"mediumturquoise",
-"mediumvioletred",
-"midnightblue",
-"mintcream",
-"mistyrose",
-"moccasin",
-"navajowhite",
-"navy",
-"oldlace",
-"olive",
-"olivedrab",
-"orange",
-"orangered",
-"orchid",
-"palegoldenrod",
-"palegreen",
-"paleturquoise",
-"palevioletred",
-"papayawhip",
-"peachpuff",
-"peru",
-"pink",
-"plum",
-"powderblue",
-"purple",
-"red",
-"rosybrown",
-"royalblue",
-"saddlebrown",
-"salmon",
-"sandybrown",
-"seagreen",
-"seashell",
-"sienna",
-"silver",
-"skyblue",
-"slateblue",
-"slategray",
-"slategrey",
-"snow",
-"springgreen",
-"steelblue",
-"tan",
-"teal",
-"thistle",
-"tomato",
-"turquoise",
-"violet",
-"wheat",
-"white",
-"whitesmoke",
-"yellow",
-"yellowgreen"]
 
 def main(HolyGrail):
 	global app
@@ -224,211 +72,80 @@ def styleMenu():
 	grid = QGridLayout()
 	grid.addWidget(QLabel("Background Color"),0,0)
 	style1 = QComboBox()
-	style1.addItems(colors)
-	style1.activated.connect(backgroundColor)
+	style1.addItems(QColor.colorNames())
+	style1.activated.connect(lambda index,x=["background","background-color"]: updateColor(index,x))
 	grid.addWidget(style1,0,1)
 	grid.addWidget(QLabel("Font Color"),1,0)
 	style2 = QComboBox()
-	style2.addItems(colors)
-	style2.activated.connect(fontColor)
+	style2.addItems(QColor.colorNames())
+	style2.activated.connect(lambda index,x=["color"]: updateColor(index,x))
 	grid.addWidget(style2,1,1)
 	grid.addWidget(QLabel("Border Color"),2,0)
 	style3 = QComboBox()
-	style3.addItems(colors)
-	style3.activated.connect(borderColor)
+	style3.addItems(QColor.colorNames())
+	style3.activated.connect(lambda index,x=["border-color"]: updateColor(index,x))
 	grid.addWidget(style3,2,1)
 	grid.addWidget(QLabel("Button Border Color"),3,0)
-	style3 = QComboBox()
-	style3.addItems(colors)
-	style3.activated.connect(buttonBorder)
-	grid.addWidget(style3,3,1)
 	style4 = QComboBox()
-	style4.addItems(colors)
-	style4.activated.connect(selectedBGColor)
-	grid.addWidget(style4,4,1)
-	grid.addWidget(QLabel("Selected background Color"),4,0)
+	style4.addItems(QColor.colorNames())
+	style4.activated.connect(lambda index,x=["border"]: updateColor(index,x))
+	grid.addWidget(style4,3,1)
 	style5 = QComboBox()
-	style5.addItems(colors)
-	style5.activated.connect(selectedColor)
-	grid.addWidget(style5,5,1)
+	style5.addItems(QColor.colorNames())
+	style5.activated.connect(lambda index,x=["background","background-color"]: updateColor(index,x,True))
+	grid.addWidget(style5,4,1)
+	grid.addWidget(QLabel("Selected background Color"),4,0)
+	style6 = QComboBox()
+	style6.addItems(QColor.colorNames())
+	style6.activated.connect(lambda index,x=["color"]: updateColor(index,x,True))
+	grid.addWidget(style6,5,1)
 	grid.addWidget(QLabel("Selected Font Color"),5,0)
 	styles.setLayout(grid)
 	styleWidget = QDockWidget('Style Options', app, objectName="Style Dock")
 	styleWidget.setWidget(styles)
 	app.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea,styleWidget)
 
-#TODO
-#clean these functions up, easy
-#edits font color of selected menus
-def selectedColor(color):
-	color = (colors[color])
+#edits color of widget items
+def updateColor(color,setting,selected=False):
+	color = (QColor.colorNames()[color])
 	stylesheet = []
+	#read stylesheet from file
 	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
 		stylesheet = f.readlines()
 		stylesheet = [line for line in stylesheet if line.strip()]
-		for i in range(0,len(stylesheet)):
-			if "selected" not in stylesheet[i]:
-				continue
-			temp = stylesheet[i][stylesheet[i].index("{"):stylesheet[i].index("}")]
-			temp = temp.split(";")
+		f.close()
+	for i in range(0,len(stylesheet)):
+		#skip if irrelevant line in stylesheet
+		if not selected and "selected" in stylesheet[i]:
+			continue
+		elif selected and "selected" not in stylesheet[i]:
+			continue
+		#line hasn't been skipped
+		temp = stylesheet[i][stylesheet[i].index("{")+1:stylesheet[i].index("}")]
+		temp = temp.split(";")
+		#modify the line
+		if "border" not in setting:
 			for j in range(0,len(temp)):
 				temp1 = temp[j].split(":")
-				if "color" in temp1[0]:
+				if any(item == temp1[0] for item in setting):
 					temp1[1] = color
 				temp[j] = ":".join(temp1)
-			temp = ";".join(temp)
-			stylesheet[i] = stylesheet[i][0:stylesheet[i].index("{")] + temp + "}"
-		f.close()
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","w") as f:
-		
-		f.writelines("\n".join(stylesheet))
-		f.close()
-	styleSheet = ""
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		for line in f:
-			if line.strip():
-				styleSheet += line
-	QApplication.instance().setStyleSheet(styleSheet)
-#edits background color of selected menus
-def selectedBGColor(color):
-	color = (colors[color])
-	stylesheet = []
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		stylesheet = f.readlines()
-		stylesheet = [line for line in stylesheet if line.strip()]
-		for i in range(0,len(stylesheet)):
-			if "selected" not in stylesheet[i]:
-				continue
-			temp = stylesheet[i][stylesheet[i].index("{"):stylesheet[i].index("}")]
-			temp = temp.split(";")
+		#border, has multiple attributes
+		#so we modify the above loop for borders
+		else:
 			for j in range(0,len(temp)):
 				temp1 = temp[j].split(":")
-				if "background" in temp1[0]:
-					temp1[1] = color
-				temp[j] = ":".join(temp1)
-			temp = ";".join(temp)
-			stylesheet[i] = stylesheet[i][0:stylesheet[i].index("{")] + temp + "}"
-		f.close()
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","w") as f:
-		f.writelines("\n".join(stylesheet))
-		f.close()
-	styleSheet = ""
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		for line in f:
-			if line.strip():
-				styleSheet += line
-	QApplication.instance().setStyleSheet(styleSheet)
-#sets background color of widgets
-def backgroundColor(color):
-	color = (colors[color])
-	stylesheet = []
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		stylesheet = f.readlines()
-		stylesheet = [line for line in stylesheet if line.strip()]
-		for i in range(0,len(stylesheet)):
-			if "selected" in stylesheet[i]:
-				continue
-			temp = stylesheet[i][stylesheet[i].index("{"):stylesheet[i].index("}")]
-			temp = temp.split(";")
-			for j in range(0,len(temp)):
-				temp1 = temp[j].split(":")
-				if "background" in temp1[0]:
-					temp1[1] = color
-				temp[j] = ":".join(temp1)
-			temp = ";".join(temp)
-			stylesheet[i] = stylesheet[i][0:stylesheet[i].index("{")] + temp + "}"
-		f.close()
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","w") as f:
-		f.writelines("\n".join(stylesheet))
-		f.close()
-	styleSheet = ""
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		for line in f:
-			if line.strip():
-				styleSheet += line
-	QApplication.instance().setStyleSheet(styleSheet)
-#sets font color of widgets
-def fontColor(color):
-	color = (colors[color])
-	stylesheet = []
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		stylesheet = f.readlines()
-		stylesheet = [line for line in stylesheet if line.strip()]
-		for i in range(0,len(stylesheet)):
-			if "selected" in stylesheet[i]:
-				continue
-			temp = stylesheet[i][stylesheet[i].index("{")+1:stylesheet[i].index("}")]
-			temp = temp.split(";")
-			for j in range(0,len(temp)):
-				temp1 = temp[j].split(":")
-				if "color" == temp1[0]:
-					temp1[1] = color
-				temp[j] = ":".join(temp1)
-			temp = ";".join(temp)
-			stylesheet[i] = stylesheet[i][0:stylesheet[i].index("{")+1] + temp + "}"
-		f.close()
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","w") as f:
-		f.writelines("\n".join(stylesheet))
-		f.close()
-	styleSheet = ""
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		for line in f:
-			if line.strip():
-				styleSheet += line
-	QApplication.instance().setStyleSheet(styleSheet)
-#changes color of most borders
-def borderColor(color):
-	color = (colors[color])
-	stylesheet = []
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		stylesheet = f.readlines()
-		stylesheet = [line for line in stylesheet if line.strip()]
-		for i in range(0,len(stylesheet)):
-			temp = stylesheet[i][stylesheet[i].index("{")+1:stylesheet[i].index("}")]
-			temp = temp.split(";")
-			for j in range(0,len(temp)):
-				temp1 = temp[j].split(":")
-				if "border" == temp1[0]:
+				if any(item == temp1[0] for item in setting):
 					temp1[1] = temp1[1].split(" ")
 					temp1[1][2] = color
 					temp1[1] = " ".join(temp1[1])
 				temp[j] = ":".join(temp1)
-			temp = ";".join(temp)
-			stylesheet[i] = stylesheet[i][0:stylesheet[i].index("{")+1] + temp + "}"
+		temp = ";".join(temp)
+		stylesheet[i] = stylesheet[i][0:stylesheet[i].index("{")+1] + temp + "}"
+	stylesheet = "\n".join(stylesheet)
+	#save new stylesheet
+	with open(os.getcwd() + "\\Settings\\StyleSheet.txt", "w") as f:
+		f.writelines(stylesheet)
 		f.close()
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","w") as f:
-		f.writelines("\n".join(stylesheet))
-		f.close()
-	styleSheet = ""
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		for line in f:
-			if line.strip():
-				styleSheet += line
-	QApplication.instance().setStyleSheet(styleSheet)
-#changes color of button borders
-def buttonBorder(color):
-	color = (colors[color])
-	stylesheet = []
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		stylesheet = f.readlines()
-		stylesheet = [line for line in stylesheet if line.strip()]
-		for i in range(0,len(stylesheet)):
-			temp = stylesheet[i][stylesheet[i].index("{")+1:stylesheet[i].index("}")]
-			temp = temp.split(";")
-			for j in range(0,len(temp)):
-				temp1 = temp[j].split(":")
-				if "border-color" == temp1[0]:
-					temp1[1] = color
-				temp[j] = ":".join(temp1)
-			temp = ";".join(temp)
-			stylesheet[i] = stylesheet[i][0:stylesheet[i].index("{")+1] + temp + "}"
-		f.close()
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","w") as f:
-		f.writelines("\n".join(stylesheet))
-		f.close()
-	styleSheet = ""
-	with open(os.getcwd() + "\\Settings\\StyleSheet.txt","r") as f:
-		for line in f:
-			if line.strip():
-				styleSheet += line
-	QApplication.instance().setStyleSheet(styleSheet)
+	#update application stylesheet
+	QApplication.instance().setStyleSheet(stylesheet)
